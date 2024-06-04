@@ -1,0 +1,40 @@
+import time, socket, sys
+
+print("\nWelcome\n")
+print("Chat room starting up....\n")
+time.sleep(1)
+
+s = socket.socket()
+host = socket.gethostname()
+ip = socket.gethostbyname(host)
+port = 1235
+s.bind((host, port))
+print(host, "(", ip, ")\n")
+name = input(str("Enter your name: "))
+           
+s.listen(1)
+print("\nWaiting for clients...\n")
+conn, addr = s.accept()
+print("Received connection from ", addr[0], "(", addr[1], ")\n")
+
+s_name = conn.recv(1024)
+s_name = s_name.decode()
+print(s_name, "is active now") 
+print("\nEnter bye to exit chat room\n")
+conn.send(name.encode())
+
+while True:
+    message = input(str("Me : "))
+    if message == "bye":
+        message = "offline"
+        
+        conn.send(message.encode())
+        
+        print("\n")
+        
+        break
+    conn.send(message.encode())
+    message = conn.recv(1024)
+    message = message.decode()
+    print(s_name, ":", message)   
+    
